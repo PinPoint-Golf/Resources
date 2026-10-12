@@ -1,0 +1,235 @@
+{
+ "view": "front",
+ "image": {
+  "width": 2048,
+  "height": 2048
+ },
+ "mm_per_px": 0.022293,
+ "ball_diameter_mm": 42.67,
+ "centre": [
+  1024.0,
+  1024.0
+ ],
+ "radius_px": 957.009,
+ "camera": {
+  "toward_camera": [
+   0.44147,
+   0.23474,
+   0.86603
+  ],
+  "image_up": [
+   -0.76466,
+   -0.40657,
+   0.5
+  ],
+  "image_right": [
+   -0.46947,
+   0.88295,
+   0.0
+  ]
+ },
+ "pole_axis": [
+  0.0,
+  -1.0
+ ],
+ "parting_line": {
+  "polyline": [
+   [
+    574.71,
+    1755.78,
+    true
+   ],
+   [
+    728.27,
+    1812.23,
+    true
+   ],
+   [
+    890.81,
+    1844.73,
+    true
+   ],
+   [
+    1057.4,
+    1852.29,
+    true
+   ],
+   [
+    1222.97,
+    1834.68,
+    true
+   ],
+   [
+    1382.5,
+    1792.44,
+    true
+   ],
+   [
+    1531.14,
+    1726.86,
+    true
+   ],
+   [
+    1664.36,
+    1639.91,
+    true
+   ],
+   [
+    1778.13,
+    1534.26,
+    true
+   ],
+   [
+    1868.99,
+    1413.1,
+    true
+   ],
+   [
+    1934.17,
+    1280.11,
+    true
+   ],
+   [
+    1971.7,
+    1139.35,
+    true
+   ],
+   [
+    1980.43,
+    995.08,
+    false
+   ],
+   [
+    1960.1,
+    851.68,
+    false
+   ],
+   [
+    1911.32,
+    713.53,
+    false
+   ],
+   [
+    1835.59,
+    584.81,
+    false
+   ],
+   [
+    1735.2,
+    469.43,
+    false
+   ],
+   [
+    1613.19,
+    370.9,
+    false
+   ],
+   [
+    1473.29,
+    292.22,
+    false
+   ],
+   [
+    1319.73,
+    235.77,
+    false
+   ],
+   [
+    1157.19,
+    203.27,
+    false
+   ],
+   [
+    990.6,
+    195.71,
+    false
+   ],
+   [
+    825.03,
+    213.32,
+    false
+   ],
+   [
+    665.5,
+    255.56,
+    false
+   ],
+   [
+    516.86,
+    321.14,
+    false
+   ],
+   [
+    383.64,
+    408.09,
+    false
+   ],
+   [
+    269.87,
+    513.74,
+    false
+   ],
+   [
+    179.01,
+    634.9,
+    false
+   ],
+   [
+    113.83,
+    767.89,
+    false
+   ],
+   [
+    76.3,
+    908.65,
+    false
+   ],
+   [
+    67.57,
+    1052.92,
+    true
+   ],
+   [
+    87.9,
+    1196.32,
+    true
+   ],
+   [
+    136.68,
+    1334.47,
+    true
+   ],
+   [
+    212.41,
+    1463.19,
+    true
+   ],
+   [
+    312.8,
+    1578.57,
+    true
+   ],
+   [
+    434.81,
+    1677.1,
+    true
+   ]
+  ],
+  "land_width_mm": 0.84
+ },
+ "ball_axes_px": {
+  "x": [
+   -0.52322,
+   0.8522
+  ],
+  "y": [
+   0.90833,
+   0.41826
+  ],
+  "z": [
+   0.0,
+   -1.0
+  ]
+ },
+ "note": "px: origin top left, y down. Ball frame: +Z pole, parting line z=0 (the dimple-free great circle). pole_axis = image direction of +Z, the axis normal to the parting line. parting_line.polyline = 36 points every 10 deg of longitude from +X toward +Y, as [x, y, visible]. ball_axes_px = image direction of each ball axis (null when it points at the camera)."
+}
