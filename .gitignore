@@ -1,0 +1,5 @@
+# build intermediates (clubheads: .blend files, meta JSON, logs)
+work/
+__pycache__/
+*.blend1
+.DS_Store
