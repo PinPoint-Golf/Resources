@@ -83,8 +83,11 @@ Every Blender run goes through `src/run_blender.sh`. It refuses to start a secon
 The modelled detail:
 - **Woods:**
   - Faces: a flush face with bulge and roll; a face insert with an engraved seam; score lines (painted on the 3 wood and hybrid).
-  - Crown: a paint line between the crown and the skirt; matte carbon twill on the crown.
-  - Sole: satin titanium; a sole-plate seam; torx weight screws in ports.
+  - Crown: a paint line between the crown and the skirt; a piano-black pearl finish (`crown_finish='gloss'`: a deep black base
+    with a soft pearl sheen under a near-mirror clear coat). Without `crown_finish` the crown is matte carbon twill.
+  - Sole and skirt: `sole_finish='gloss'` paints them, and the hosel neck, in the same piano black, with a little more pearl
+    so their steep edges still read on a dark background. Without it they are satin titanium.
+  - Sole: a sole-plate seam; torx weight screws in ports.
   - Hosel: an exact cone set behind the face with a concave fillet into the crown; an adjustable sleeve with index marks; a banded ferrule; a graphite shaft stub.
 - **Irons:**
   - Face: cut grooves (12 on the 7 iron, 18 on the wedge); a blasted scoring area (milled arcs on the wedge).
@@ -110,8 +113,12 @@ To check surface quality, use `--looks zebra` or `--looks curv` with `render.py`
 ### Lighting
 
 - **Environment:** the reflections and fill come from `ref/studio_small_08_2k.hdr`, *Studio Small 08* by Sergej Majboroda (Poly Haven, CC0 1.0). See `ref/SOURCE.txt`.
+  Clubs with a gloss crown use a heavily blurred copy (`soft_hdri` in `render.py`), so the clear coat mirrors the studio's light
+  and gradient but not its props.
 - **Area lights:** procedural area lights are placed per view in camera space. Lofts of 30° and up get a lower top rim and a dim face card.
 - **Dark look:** a low kicker and lower and mid rims (`DARK_SEPARATION` in `render.py`) separate the silhouette from a dark background.
+  The top view of a gloss-crown club leaves out the kicker, which would show as a blob on the crown and has no sole to light there,
+  and adds a level light from the target side (`GLOSS_TOP_DARK`) so the black skirt beside the face still reads.
 
 ### Line look
 

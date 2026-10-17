@@ -54,7 +54,7 @@ CLUBS = {
         insert=dict(a=45.0, b=23.5, p=3.2, b0=-1.5, c0=0.5, w=0.35, seam_in=2.2), border=1.6, flush_face=True,
         score=dict(kind='panels', y0=-20.5, y1=24.0, hw0=22.5, hw1=26.0, lw=0.7, rows=(-10.0, 0.0, 10.0),
                    rlen=17.0, rw=0.6, pitch=0.55, margin=1.75),
-        align=dict(x0=-17.0, x1=-25.0, w=0.9), side_face_u=0.22, crown_spec=0.12, crown_rough=0.55,
+        align=dict(x0=-17.0, x1=-25.0, w=0.9), side_face_u=0.22, crown_spec=0.12, crown_rough=0.55, crown_finish='gloss', sole_finish='gloss', profile_smooth=2.5,
         hosel=dict(x=-18.5, y=19.5, z0=36.0, z1=64.0, r0=7.2, r1=6.65, fillet=10.0, exact=True, r_top=0.12, face_gap=0.3, face_margin=-0.5),
         sleeve=dict(len=17.0, r=6.65, flush=True), ferrule=dict(len=16.0, r0=6.6, r1=4.7, flush=True),
         shaft=dict(len=78.0, r=4.3, mat='graphite'),
@@ -73,7 +73,7 @@ CLUBS = {
         heel_clip=dict(pad=0.3, ang=46.0, p=(34.65, 9.6), R=6.0, z=(20.0, 30.0)),
         plan_grow_back=0.0, plan_grow_front=2.0, fc_x_off=2.0,
         fo_inset=dict(top=2.4, bottom=3.0, toe=1.0, heel=3.0), fo_len=6.0, r_sil=1.5, r_fo=3.0,
-        side_face_u=0.22, crown_spec=0.12, crown_rough=0.55,
+        side_face_u=0.22, crown_spec=0.12, crown_rough=0.55, crown_finish='gloss', sole_finish='gloss',
         width=110.0, depth=86.0, y_off=-3.0, plan=WOOD_PLAN,
         crown_u=[0, 0.11, 0.30, 0.55, 0.80, 1.0], crown_h=[34.6, 36.6, 38.3, 36.0, 31.0, 26.4],
         crown_lat=(0.36, 0.18), crown_lat_c=-0.06,
@@ -104,7 +104,7 @@ CLUBS = {
         profile_from_sil=-36.0, plan_grow_toe=1.0, nose_ext=1.2, profile_smooth=2.2, profile_keep_nose=3.5,
         toe_tip=(0.62, 1.02, 0.94), toe_tip_front=(0.25, 0.75), toe_wrap='none', toe_satin=(-24.0, -38.0, -0.11),
         fo_inset=dict(top=2.2, bottom=2.8, toe=1.2, heel=2.8), fo_len=5.5, r_sil=1.5, r_fo=3.0,
-        side_face_u=0.22, crown_spec=0.12, crown_rough=0.55,
+        side_face_u=0.22, crown_spec=0.12, crown_rough=0.55, crown_finish='gloss', sole_finish='gloss',
         width=90.0, depth=60.0, y_off=-7.0, plan=WOOD_PLAN,
         crown_u=[0, 0.12, 0.30, 0.55, 0.80, 1.0], crown_h=[29.8, 31.6, 32.8, 30.6, 26.0, 22.0],
         crown_lat=(0.36, 0.2), crown_lat_c=-0.06,
@@ -1440,8 +1440,10 @@ class NB:
         """One Principled BSDF; each layer's inputs are blended over the previous by its mask."""
         bpy = bl()
         gn = s.node('ShaderNodeNewGeometry').outputs['Normal']
-        defaults = dict(color=(0.5, 0.5, 0.5), metal=1.0, rough=0.3, coat=0.0, spec=0.5, normal=gn)
-        types = dict(color='RGBA', metal='FLOAT', rough='FLOAT', coat='FLOAT', spec='FLOAT', normal='VECTOR')
+        defaults = dict(color=(0.5, 0.5, 0.5), metal=1.0, rough=0.3, coat=0.0, coat_rough=0.3, coat_ior=1.5, spec=0.5, sheen=0.0,
+                        normal=gn)
+        types = dict(color='RGBA', metal='FLOAT', rough='FLOAT', coat='FLOAT', coat_rough='FLOAT', coat_ior='FLOAT', spec='FLOAT',
+                     sheen='FLOAT', normal='VECTOR')
         acc = {k: layers[0].get(k, v) for k, v in defaults.items()}
         for L, m in zip(layers[1:], masks):
             for k in defaults:
@@ -1451,7 +1453,8 @@ class NB:
                 acc[k] = s.mixv(types[k], acc[k], v, m)
         n = s.node('ShaderNodeBsdfPrincipled')
         for k, sock in (('color', 'Base Color'), ('metal', 'Metallic'), ('rough', 'Roughness'),
-                        ('coat', 'Coat Weight'), ('spec', 'Specular IOR Level'), ('normal', 'Normal')):
+                        ('coat', 'Coat Weight'), ('coat_rough', 'Coat Roughness'), ('coat_ior', 'Coat IOR'), ('spec', 'Specular IOR Level'),
+                        ('sheen', 'Sheen Weight'), ('normal', 'Normal')):
             v = acc[k]
             if isinstance(v, bpy.types.NodeSocket):
                 s.link(v, _in(n, sock))
@@ -1459,7 +1462,6 @@ class NB:
                 _in(n, sock).default_value = (*v, 1.0)
             else:
                 _in(n, sock).default_value = v
-        _in(n, 'Coat Roughness').default_value = 0.3
         s.out(n.outputs[0])
     def out(s, sh):
         o = s.node('ShaderNodeOutputMaterial'); s.link(sh, o.inputs['Surface'])
@@ -1526,6 +1528,16 @@ def mat_wood(name, P):
                   rough=nb.math('ADD', nb.math('MULTIPLY', weave, 0.06), P.get('crown_rough', 0.46)), coat=0.0,
                   spec=P.get('crown_spec', 0.22),
                   normal=nb.bump(weave, 0.015, 0.02))
+    # piano-black pearl: near-mirror clear coat over a deep black base with little reflection of its own (no
+    # grey metallic sheen) and a soft pearl glow toward grazing angles; a low-IOR coat keeps the studio's
+    # reflections from glaring on the black
+    piano = dict(color=(0.003, 0.003, 0.0035), metal=0.0, rough=0.35, spec=0.0, sheen=P.get('pearl', 0.12),
+                 coat=1.0, coat_rough=P.get('coat_rough', 0.04), coat_ior=P.get('coat_ior', 1.25))
+    if P.get('crown_finish') == 'gloss':
+        carbon = dict(piano)
+    if P.get('sole_finish') == 'gloss':   # sole and skirt painted to match (face border, screws, ports stay);
+        # a little more pearl, so their steep silhouette edges still glow against a dark background
+        ti = dict(piano, sheen=P.get('sole_pearl', 0.4))
     border = dict(color=(0.62, 0.62, 0.63), metal=1.0, rough=0.19)
     # face insert: dark brushed metal (horizontal) with score lines or grooves
     br = nb.noise(o, 1.2, 4.0, 0.7, stretch=(14.0, 0.25, 14.0))
@@ -1814,7 +1826,7 @@ def build(club, h=None):
     body = Vh[m.hosel(Vb[:, 0].astype(F32), Vb[:, 1].astype(F32), Vb[:, 2].astype(F32)) > 1.0]
     meta_body = dict(body_min=body.min(axis=0).tolist(), body_max=body.max(axis=0).tolist())
     meta = dict(club=club, label=P['label'], kind=P['kind'], loft=P['loft'], lie=P['lie'],
-                offset=P.get('offset'), h=h,
+                offset=P.get('offset'), h=h, crown_finish=P.get('crown_finish'),
                 face_centre=FC.tolist(), face_normal=m.n.tolist(), face_up=m.eu.tolist(),
                 face_toe=[0.0, -1.0, 0.0],
                 le_heel=le_heel.tolist(), le_toe=le_toe.tolist(),

@@ -116,7 +116,32 @@ def setup_cycles(scn, samples, preview):
                 pass
 
 
-def setup_world(scn, strength, rot_z):
+def soft_hdri(sig_az=60.0, sig_el=10.0):
+    """The studio HDRI with its detail smeared out (Gaussian, degrees in azimuth and elevation, by
+    three box passes): the room's broad light and gradient stay, the props and stands go.  A gloss
+    black crown mirrors the environment crisply, so it reflects this instead."""
+    im = bpy.data.images.get('studio_soft')
+    if im:
+        return im
+    src = bpy.data.images.load(HDRI, check_existing=True)
+    W, H = src.size
+    px = np.empty(W * H * 4, np.float32); src.pixels.foreach_get(px); px = px.reshape(H, W, 4)
+    def box(a, r, axis, wrap):
+        n = a.shape[axis]
+        pad = [(0, 0)] * a.ndim; pad[axis] = (r + 1, r)
+        a = np.pad(a, pad, mode='wrap' if wrap else 'edge')
+        c = np.cumsum(a, axis=axis, dtype=np.float64)
+        return ((np.take(c, range(2 * r + 1, n + 2 * r + 1), axis=axis) - np.take(c, range(0, n), axis=axis)) / (2 * r + 1)).astype(np.float32)
+    for sig, axis, wrap in ((sig_az * W / 360.0, 1, True), (sig_el * H / 180.0, 0, False)):
+        r = max(1, int(round(sig * math.sqrt(12.0 / 3.0 + 1.0) / 2.0)))   # three boxes ~ one Gaussian
+        for _ in range(3):
+            px = box(px, r, axis, wrap)
+    im = bpy.data.images.new('studio_soft', W, H, float_buffer=True)
+    im.pixels.foreach_set(px.ravel())
+    return im
+
+
+def setup_world(scn, strength, rot_z, soft=False):
     w = bpy.data.worlds.get('studio') or bpy.data.worlds.new('studio')
     scn.world = w
     nt = w.node_tree; nt.nodes.clear()
@@ -124,7 +149,7 @@ def setup_world(scn, strength, rot_z):
     mp.inputs['Rotation'].default_value = (0, 0, math.radians(rot_z))
     env = nt.nodes.new('ShaderNodeTexEnvironment')
     if os.environ.get('NO_HDRI') != '1':
-        env.image = bpy.data.images.load(HDRI, check_existing=True)
+        env.image = soft_hdri() if soft else bpy.data.images.load(HDRI, check_existing=True)
     bg = nt.nodes.new('ShaderNodeBackground'); bg.inputs['Strength'].default_value = strength
     out = nt.nodes.new('ShaderNodeOutputWorld')
     nt.links.new(tc.outputs['Generated'], mp.inputs['Vector'])
@@ -176,16 +201,26 @@ LIGHTS['dark_steep'] = dict(world=0.10, rot=40, lights=[
 ] + DARK_SEPARATION)
 
 
+# Dark look, top view of a gloss-black head: a level light from the target side, so the skirt seen edge-on
+# beside the face (black gloss mirroring the dark room) still separates from the background.  It sits
+# below anything the upward-facing crown can mirror.
+GLOSS_TOP_DARK = [((1.00, 0.10, 0.0), 0.55, 0.12, float(os.environ.get('GLOSS_EDGE_W', 8.0)), (1.0, 0.97, 0.94))]
+
+
 def clear_lights():
     for ob in list(bpy.data.objects):
         if ob.type == 'LIGHT':
             bpy.data.objects.remove(ob)
 
 
-def setup_lights(look, R, U, B, centre_m, steep=False, face_n=None):
+def setup_lights(look, R, U, B, centre_m, steep=False, face_n=None, skip=(), extra=()):
+    """skip: lights left out of this view, extra: lights added to it (a gloss crown mirrors every light
+    it faces, and gloss edges seen edge-on only show what they mirror)."""
     clear_lights()
     cfg = LIGHTS[look + '_steep'] if steep else LIGHTS[look]
-    for i, (d, dist, size, power, col) in enumerate(cfg['lights']):
+    for i, (d, dist, size, power, col) in enumerate(list(cfg['lights']) + list(extra)):
+        if any(L is k for L in cfg['lights'][i:i + 1] for k in skip):
+            continue
         v = d[0] * R + d[1] * U + d[2] * B
         v = v / np.linalg.norm(v)
         L = bpy.data.lights.new('L%d' % i, 'AREA')
@@ -452,7 +487,7 @@ def main():
     for look in looks:
         if look not in ('line', 'zebra', 'curv'):
             cfg = LIGHTS[look + '_steep'] if steep else LIGHTS[look]
-            setup_world(scn, cfg['world'], cfg['rot'])
+            setup_world(scn, cfg['world'], cfg['rot'], soft=meta.get('crown_finish') == 'gloss')
         for vname in views:
             f = frames[vname]
             place_camera(f)
@@ -477,7 +512,12 @@ def main():
                             face_n=np.array(meta['face_normal']))
                 tag = 'line-black'; path = pb
             else:
-                setup_lights(look, f['R'], f['U'], f['B'], centre_m, steep, np.array(meta['face_normal']))
+                # a gloss crown mirrors the low front kicker as a blob in the top view, where it has no
+                # sole band to light
+                gloss_top = meta.get('crown_finish') == 'gloss' and vname == 'top'
+                setup_lights(look, f['R'], f['U'], f['B'], centre_m, steep, np.array(meta['face_normal']),
+                             skip=DARK_SEPARATION[:1] if gloss_top else (),
+                             extra=GLOSS_TOP_DARK if gloss_top and look == 'dark' else ())
                 tag = look
                 path = os.path.join(odir, '%s_%s_%s%s.png' % (club, vname, tag, a.suffix))
                 scn.render.filepath = path
