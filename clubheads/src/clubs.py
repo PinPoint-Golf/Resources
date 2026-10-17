@@ -133,6 +133,7 @@ CLUBS = {
                  (38.85, 34.94), (39.78, 36.71), (40.7, 38.48), (43.49, 43.8), (47.19, 50.89), (50.9, 57.98), (62.35, 52.01), (58.67, 44.91), (55.0, 37.81), (52.24, 32.48), (49.48, 27.15), (48.3, 24.5), (47.2, 22.3), (46.0, 20.2), (44.8, 18.1), (43.4, 16.0), (41.9, 13.9), (40.35, 11.8), (38.45, 9.7), (36.2, 7.6), (33.3, 5.5), (29.1, 3.4), (25.5, 2.3)],
         neck=dict(L=12.0, L_top=22.0, zL=(20.0, 34.0), z0=2.0, z1=34.5, z0b=0.0, z1b=34.5, t_cap=41.0, k_cap=5.0, fan=(16.0, 34.0, 8.0), zr=(12.0, 36.0), y_face=(22.5, 32.0),
                   cove=dict(L=16.0, L_top=20.0, zL=(18.0, 32.0), z0=0.0, z1=12.0, k=4.0, q_in=1.5, back_in=0.45)), ztop_heel_cap=(24.0, 30.0),
+        heel_back=dict(diag=(28.5, -20.0, 1.65), k=(4.0, 1.0), k_y=(28.0, 34.0), k_heel=14.0, x_in=1.5, sw=(22.0, 36.0, 11.0)),
         fc=(-3.0, 18.0), t_face=3.0, w_top=6.0, sole_w=20.0, sole_w_taper=0.05, back_ts=0.85, back_m=0.7, flange=0.0,
         r_face=0.55, r_back=1.6,
         cavity=dict(rim=5.4, rim_top=6.0, zm=(14.0, 18.0), r=1.6, lip=0.7, y_heel=17.0),
@@ -154,6 +155,7 @@ CLUBS = {
                   cove=dict(y0=20.5, q_in=-1.0, L=20.0, zL=(8.0, 20.0), z0=0.0, z1=8.0, k=4.0, back_in=0.45, web_round=3.0,
                             t_free=30.0, t_free_k=3.0)),
         ztop_heel_cap=(27.0, 19.0),
+        heel_back=dict(rule=dict(y=30.0, heading=59.0, R=14.3), k=(4.0, 1.0), x_in=1.5),
         fc=(-5.0, 12.0), t_face=3.4, w_top=6.0, sole_w=33.0, sole_w_taper=0.08, back_ts=0.9, back_m=0.85, flange=1.5, flange_t=0.5,
         r_face=0.55, r_back=1.8,
         cavity=dict(rim=5.0, rim_top=5.4, zm=(11.0, 12.5), r=1.4, lip=0.6, polish=False, depth=2.0, y_heel=24.0),
@@ -199,6 +201,14 @@ def smin(a, b, k):
 
 def smax(a, b, k):
     return -smin(-a, -b, k)
+
+def smin2(a, b, k):
+    """C2 smooth min (cubic blend over |a - b| < k): curvature ramps in, no kink in the zebra."""
+    h = np.maximum(k - np.abs(a - b), 0.0) / k
+    return np.minimum(a, b) - h * h * h * k * (1.0 / 6.0)
+
+def smax2(a, b, k):
+    return -smin2(-a, -b, k)
 
 def round_isect(a, b, r):
     """Intersection of {a<0} and {b<0} with the convex corner rounded to radius r."""
@@ -736,22 +746,31 @@ class Iron:
             s.features.append(NeckSmooth(s, ns['lo'], ns['hi'], ns['sigma'], ns['wy'], ns['wz'], P['h_build']))
         if P.get('badge'):
             s.features.append(Badge(s, **P['badge']))
+        s.hfloor = None
+        if P.get('heel_back', {}).get('rule'):
+            s.hfloor = s.heel_floor()
 
     def xf(s, z): return -z * s.tanL
     def sole_w(s, y):
         P = s.P; yc = P['fc'][0]
-        return P['sole_w'] * (1 - P['sole_w_taper'] * ((y - yc) / 40.0) ** 2)
+        sw = P['sole_w'] * (1 - P['sole_w_taper'] * ((y - yc) / 40.0) ** 2)
+        hb = P.get('heel_back')
+        if hb and hb.get('sw'):  # the sole's trailing edge closes in toward the hosel too, so near the
+            # sole the back meets the plan floor (slab) at a shallow angle instead of along a crease
+            y0, y1, sw1 = hb['sw']
+            sw = sw + (sw1 - sw) * smootherstep(y0, y1, y)
+        return sw
     def ztop(s, y):
         return np.interp(y, s.ztop_tab[0], s.ztop_tab[1]).astype(F32)
-    def xb(s, y, z):
+    def xb(s, y, z, sw=None, fl=None):
         """Back surface x: a solid tapered toe section from the sole trailing edge (x = -sole_w at
         z = 0) up to the back of the top line (w_top behind the face at the local top height).
         back_p > 1 keeps the lower back full (flange / sole mass)."""
         P = s.P
-        zt = s.ztop(y); sw = s.sole_w(y).astype(F32)
+        zt = s.ztop(y); sw = (s.sole_w(y) if sw is None else sw).astype(F32)
         xtop = (s.xf(zt) - P['w_top']).astype(F32)
         t = np.clip(z / zt, 0.0, 1.4).astype(F32)
-        fl = F32(P.get('flange', 0.0))
+        fl = F32(P.get('flange', 0.0)) if fl is None else fl
         bump = np.maximum(np.sin(np.pi * np.clip(t / F32(P.get('flange_t', 0.55)), 0.0, 1.0)), 0.0) ** F32(1.5)
         # S-shaped rise: the back leaves the sole trailing edge vertically, sweeps back through the
         # middle (solid section), and meets the top line w_top behind the face.
@@ -884,6 +903,25 @@ class Iron:
         ry = qy - t * F32(ax[1]); rz = Z - t * F32(ax[2])
         rad = np.sqrt(qx * qx + ry * ry + rz * rz)
         return round_isect(rad - s.hr(t), t - F32(s.t1), F32(hz.get('r_top', 0.5)))
+    def outline_top(s, y):
+        """Top z of the face-view outline at heel-toe station y (scalar)."""
+        P = s.outline; Q = np.roll(P, -1, axis=0)
+        c = (P[:, 0] - y) * (Q[:, 0] - y) <= 0
+        t = (y - P[c, 0]) / np.where(Q[c, 0] == P[c, 0], 1.0, Q[c, 0] - P[c, 0])
+        return float((P[c, 1] + t * (Q[c, 1] - P[c, 1])).max())
+    def heel_floor(s):
+        """heel_back 'rule' mode: the plan floor derived from the head.  It leaves the top line's own
+        back edge (the slab back at the outline's top) at y_anchor on the top-line heading, and turns
+        onto the hosel's back edge through a bend of radius R.  Returns (y, x, slope, k) for the
+        diagonal and the C2 blend whose corner offset k/6 matches that circle's."""
+        r = s.P['heel_back']['rule']
+        ya = r['y']; Y = np.array([ya], F32); Z = np.array([s.outline_top(ya)], F32)
+        XB = s.xb(Y, Z).astype(F32); X = XB.copy()
+        for _ in range(4):                      # the back x of the slab there (B = Bx - X)
+            X = (X + s.slab(X, Y, Z, XB)[1]).astype(F32)
+        th = math.radians(r['heading']); h2 = math.tan(th / 2)
+        k = 6.0 * r['R'] * (1.0 - math.sqrt(1.0 - h2 * h2))
+        return ya, float(X[0]), math.tan(th), k
     def slab(s, X, Y, Z, XB):
         """Face and back half-spaces of the blade.  With a `neck`, the heel end of the blade turns
         (C2 ramp) into a slab centred on the hosel axis whose width is the hosel diameter; with the
@@ -913,6 +951,32 @@ class Iron:
         cvp = s.P['neck'].get('cove')
         if cvp:  # in cove mode the slab is only a hidden web: keep its back inside the hosel cone
             Bx = Bx + sb * F32(cvp.get('back_in', 0.0)) * r
+        hb = s.P.get('heel_back')
+        if hb:  # in plan the heel of the blade sweeps forward into the hosel's back edge: a plan floor
+            # runs up a diagonal and rounds into the hosel's back edge (x_in inside it, so the cove
+            # fillet stays clean), and the back is pushed out to it.  C2 blends (smax2: corner radius
+            # k, tight near the hosel so the scoop web above is untouched) keep the zebra unkinked;
+            # the full-width back then never carries on behind the top line under the neck.  'diag'
+            # gives the floor by hand; 'rule' derives it from the head (heel_floor)
+            xh = F32(s.A0[0] - s.P['hosel']['r0'] + hb['x_in'])
+            if hb.get('rule'):
+                if s.hfloor is not None:        # (None while heel_floor() itself samples the slab)
+                    yd, xd, sl, kh = s.hfloor
+                    ya, yb = yd, yd + (float(xh) - xd) / sl   # corner ramp: anchor -> hosel line
+                    xp = smin2(F32(xd) + F32(sl) * (Y - F32(yd)), xh, F32(kh))
+                    k0, k1 = hb['k']
+                    fl = s.P.get('flange', 0.0)
+                    if fl:  # the flange runs out toward the heel, from the back pocket's heel end to
+                        # where the floor meets the sole edge, so it never peeks out behind the top line
+                        y0 = s.P['cavity'].get('y_heel', yd)
+                        y1 = max(y0 + 1.0, yd + (-float(s.sole_w(yd)) - xd) / sl)
+                        w = smootherstep(F32(y0), F32(y1), Y)
+                        Bx = Bx + (F32(1) - sb) * (s.xb(Y, Z, fl=F32(fl) * (F32(1) - w)) - s.xb(Y, Z))
+                    Bx = smax2(Bx, xp, F32(k0) + F32(k1 - k0) * smootherstep(F32(ya), F32(yb), Y))
+            else:
+                yd, xd, sl = hb['diag']; (k0, k1), (ya, yb) = hb['k'], hb['k_y']
+                xp = smin2(F32(xd) + F32(sl) * (Y - F32(yd)), xh, F32(hb['k_heel']))
+                Bx = smax2(Bx, xp, F32(k0) + F32(k1 - k0) * smootherstep(F32(ya), F32(yb), Y))
         B = Bx - X
         tc = s.P['neck'].get('t_cap')
         if tc is not None:  # the slab ends flat inside the hosel (hidden), so the outline's cap never shows

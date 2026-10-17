@@ -98,7 +98,9 @@ The modelled detail:
   - hosel and shaft: `hosel`, `sleeve`, `ferrule`, `shaft`;
   - sole: `screws`, `seam`, `slot`, `rails`.
 - **Irons:**
-  - outline and neck: `outline` (the face-view polygon), `neck`/`cove`;
+  - outline and neck: `outline` (the face-view polygon), `neck`/`cove`, `heel_back` (keeps the top line thin at the heel:
+    the back of the blade sweeps into the hosel's back edge, by hand with `diag` on the 7 iron, or derived from a heading
+    and bend radius with `rule` on the wedge);
   - sections: `t_face`, `w_top`, `sole_w`, `back_ts`/`back_m`/`flange`;
   - details: `cavity`, `sole`, `grooves`, `blast`, `hosel`, `offset`, `badge`.
 - **Both:** `loft`, `lie`, `h` (the voxel size).
