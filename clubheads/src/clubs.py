@@ -99,13 +99,14 @@ CLUBS = {
         crown_y=[[-51.62, 26.92], [-51.23, 27.59], [-50.85, 28.07], [-50.46, 28.46], [-50.08, 28.75], [-49.69, 28.94], [-49.31, 29.23], [-48.92, 29.42], [-48.54, 29.52], [-48.15, 29.71], [-47.77, 29.9], [-47.39, 30.0], [-47.0, 30.09], [-46.62, 30.19], [-46.23, 30.38], [-44.31, 30.86], [-42.39, 31.25], [-40.46, 31.53], [-38.54, 31.82], [-36.62, 32.02], [-34.69, 32.21], [-32.77, 32.4], [-30.85, 32.5], [-28.93, 32.59], [-27.0, 32.69], [-25.08, 32.78], [-23.16, 32.78], [-21.23, 32.78], [-19.31, 32.78], [-17.39, 32.69], [-15.47, 32.59], [-13.54, 32.5], [-11.62, 32.4], [-9.7, 32.3], [-7.77, 32.11], [-5.85, 31.92], [-3.93, 31.73], [-2.01, 31.44], [-0.08, 31.15], [1.84, 30.86], [3.76, 30.57], [5.69, 30.28], [7.61, 29.9], [9.53, 29.52], [11.45, 29.04], [13.38, 28.65], [15.3, 28.17], [17.22, 27.69], [19.15, 27.21], [21.07, 27.02], [22.99, 27.02], [24.91, 27.3], [26.84, 27.98]],
         rocker=[[-51.62, 20.57], [-51.23, 18.56], [-50.85, 17.02], [-50.46, 15.67], [-50.08, 14.33], [-49.69, 13.27], [-49.31, 12.21], [-48.92, 11.25], [-48.54, 10.38], [-48.15, 9.61], [-47.77, 9.04], [-47.39, 8.46], [-47.0, 7.98], [-46.62, 7.6], [-46.23, 7.31], [-44.31, 6.15], [-42.39, 5.48], [-40.46, 4.9], [-38.54, 4.42], [-36.62, 4.04], [-34.69, 3.56], [-32.77, 3.17], [-30.85, 2.6], [-28.93, 2.21], [-27.0, 1.92], [-25.08, 1.54], [-23.16, 1.25], [-21.23, 0.96], [-19.31, 0.77], [-17.39, 0.58], [-15.47, 0.38], [-13.54, 0.19], [-11.62, 0.1], [-9.7, 0.0], [-7.77, 0.0], [-5.85, 0.0], [-3.93, 0.0], [-2.01, 0.0], [-0.08, 0.0], [1.84, 0.1], [3.76, 0.19], [5.69, 0.29], [7.61, 0.48], [9.53, 0.67], [11.45, 0.87], [13.38, 1.06], [15.3, 1.35], [17.22, 1.63], [19.15, 1.92], [21.07, 2.31], [22.99, 2.6], [24.91, 3.08], [26.84, 3.46], [30.59, 5.19], [32.51, 6.83], [34.43, 9.52]],
         plan_heel=[(-21.5, 37.0), (-18.0, 39.0), (-13.5, 40.0), (-9.0, 39.2), (-6.5, 37.4)],
-        heel_sweep=dict(R=30.0, z=(30.0, 40.0), round=2.0),
+        heel_sweep=dict(R=30.0, z=(30.0, 40.0)),
         # the face plate's agreed outline (world mm, face view): the top and leading edges as lines z = c + k y,
         # the heel fully rounded by two quarter ellipses (start y, half-width, height) that leave those lines
         # tangentially and meet, vertical, at the heel's furthest point; the whole plate 1 mm lower than before
         face_plate=dict(top=(26.279, -0.181), bot=(3.9129, 0.036), q_top=(17.84, 9.7084, 6.8768),
                         q_bot=(7.3226, 20.2258, 9.5466), zshift=0.079, drop=1.0, ym=-12.0, yw=-6.0, band=(1.37, 0.65), blend_top=(-4.0, 2.0), blend_bot=(-14.0, -5.0),
-                        fillet_z=(19.0, 24.0, 0.0), drop_bot=1.25),
+                        drop_bot=1.25, flare_out=0.4, flare_k=1.8, flare_k_z=(16.0, 22.0), flare_k_d=(5.0, 12.0),
+                        fillet_d=(1.0, 9.0), fillet_deep=(1.0, 4.0, 16.0, 21.0), fillet_top=(22.0, 27.0, 1.6)),
         plan_grow_back=0.0, plan_grow_front=1.8, fc_x_off=1.8,
         profile_from_sil=-36.0, plan_grow_toe=1.0, nose_ext=1.2, profile_smooth=2.2, profile_keep_nose=3.5,
         toe_tip=(0.62, 1.02, 0.94), toe_tip_front=(0.25, 0.75), toe_wrap='none', toe_satin=(-24.0, -38.0, -0.11),
@@ -119,8 +120,8 @@ CLUBS = {
         fc=(-10.0, 16.0), bulge=260.0, roll=260.0, face_r=(0.8, 0.6),
         insert=dict(a=36.0, b=13.5, p=3.0, b0=-1.0, c0=0.5, w=0.32, seam_in=1.7), border=1.4, flush_face=True,
         score=dict(kind='fwlines', lines=[(-18.28, 23.84, 22.28), (-11.29, 20.57, 28.59), (-9.41, 17.5, 29.71), (-9.0, 14.33, 28.5), (-9.18, 11.25, 23.98), (-9.79, 8.17, 15.38)], lw=0.6, pitch=0.5, margin=1.5),
-        hosel=dict(x=-11.8, y=19.9, z0=8.0, z1=33.0, r0=7.0, r1=6.65, fillet=7.0, exact=True, r_top=0.12,
-                   face_gap=0.3, face_margin=-0.5, sole_cut=True, recede=dict(z=(18.0, 31.0), low=(4.0, 14.0), front=5.5, back=2.0)),
+        hosel=dict(x=-15.8, y=19.9, z0=8.0, z1=33.0, r0=7.0, r1=6.65, fillet=7.0, exact=True, r_top=0.12,
+                   face_gap=0.3, face_margin=-0.5, sole_cut=True),
         sleeve=dict(len=17.0, r=6.65, flush=True), ferrule=dict(len=16.0, r0=6.6, r1=4.7, flush=True),
         shaft=dict(len=78.0, r=4.4, mat='graphite'),
         screws=[dict(x=-42.0, y=-26.0, r=4.6), dict(x=-20.0, y=-2.0, r=4.6)],
@@ -467,11 +468,9 @@ class Wood:
             f1 = s._heel_corner_fill(); s.hfill = f1
             f2 = s._heel_corner_fill()       # a second pass over the first: the rims it raised hold more water
             s.hfill = dict(f1, G=f1['G'] + f2['G'])
-        if fp:   # the face plate's agreed outline (hybrid): the body 1 mm lower round the face, then the heel table
-            s.warp = s._warp_setup(fp)
-            s.Vseam = s._plate_outline(fp)                  # the agreed outline: where the seam (visible edge) runs
-            s.Vplate, s.fo_plate_ = s._plate_outlines(fp)    # the plate's own (flush) edge, and the seam's outline
-            s.heel = s._plate_setup(fp)
+        if fp:   # the face plate's agreed outline (hybrid): the body 1 mm lower round the face; behind the plate's heel
+            s.warp = s._warp_setup(fp)       # edge the body's own face-outline flare rolls away, as round the toe
+            s.Vplate, s.fo_plate = s._plate_outlines(fp)    # the plate's own (flush) edge, and the seam's outline
             s.plate = fp
         s.features = []
         for sc in P.get('screws') or []:
@@ -566,15 +565,6 @@ class Wood:
         qx = X - F32(A0[0]); qy = Y - F32(A0[1]); qz = Z
         t = qy * F32(ax[1]) + qz * F32(ax[2])
         rx = qx; ry = qy - t * F32(ax[1]); rz = qz - t * F32(ax[2])
-        rc = hz.get('recede')
-        if rc:   # below the top line the neck's front recedes (front flattened, axis set back), so the face
-            # plate can run on over it; the face-view outline of the neck (y, z) is unchanged
-            u = F32(1) - smootherstep(F32(rc['z'][0]), F32(rc['z'][1]), Z)
-            if rc.get('low'):   # (and only from above the sole: low down the neck is behind the face anyway)
-                u = u * smootherstep(F32(rc['low'][0]), F32(rc['low'][1]), Z)
-            rx = qx + F32(rc.get('back', 0.0)) * u
-            a = F32(hz['r0']) - F32(rc['front']) * u                 # front semi-axis
-            rx = np.where(rx > 0, rx * F32(hz['r0']) / a, rx)
         rad = np.sqrt(rx * rx + ry * ry + rz * rz)
         f = np.clip((t - s.t0) / (s.t1 - s.t0), 0, 1)
         if hz.get('exact'):  # exact straight cone, crisp top for a flush sleeve, open bottom inside the body
@@ -1015,237 +1005,17 @@ class Wood:
         print('  plate: band %.2f / %.2f mm beyond the seam, tapering over %.0f%% / %.0f%% of the heel arcs'
               % (fp['band'][0], fp['band'][1], 100 * tp[0], 100 * tp[1]))
         return Vd + band[:, None] * nv, Vd + (h + sin_)[:, None] * nv
-    def plate_blend(s, Y, Z):
+    def plate_blend(s, Y, Z, arcs=False):
         """0 on the toe half (the head's own plate, 1 mm lower), 1 where the agreed outline holds: over blend_top
         along the top edge and blend_bot along the leading edge (where the two lie within ~0.1 mm), eased across
-        the middle of the face, where no edge shows."""
+        the middle of the face, where no edge shows.  arcs=True: only round the heel's quarter-ellipses (from
+        `arc_ramp` mm before each starts), so along the straight edges the head as built (warped) stands."""
         fp = s.plate; wz = smoothstep(F32(s.FC[2] - 4.0), F32(s.FC[2] + 4.0), Z)
-        return (smootherstep(F32(fp['blend_bot'][0]), F32(fp['blend_bot'][1]), Y) * (F32(1) - wz) +
-                smootherstep(F32(fp['blend_top'][0]), F32(fp['blend_top'][1]), Y) * wz).astype(F32)
-    def tube_front(s, Y, Z):
-        """Depth behind the face surface of the neck tube's front (as receded), nan where there is none."""
-        hz = s.P['hosel']; sl, cl = math.sin(s.lie), math.cos(s.lie)
-        p = (Y - s.A0[1]) * sl - Z * cl; t = (Y - s.A0[1]) * cl + Z * sl
-        r = hz['r0'] + (hz['r1'] - hz['r0']) * np.clip((t - s.t0) / (s.t1 - s.t0), 0, 1)
-        rc = hz.get('recede'); u = 0.0; a = hz['r0']; bk = 0.0
-        if rc:
-            u = 1.0 - smootherstep(rc['z'][0], rc['z'][1], Z)
-            if rc.get('low'):
-                u = u * smootherstep(rc['low'][0], rc['low'][1], Z)
-            a = hz['r0'] - rc['front'] * u; bk = rc.get('back', 0.0) * u
-        ok = (np.abs(p) < r) & (t < s.t1)
-        xf = s.A0[0] - bk + a / hz['r0'] * np.sqrt(np.maximum(r * r - p * p, 0.0))
-        D = -s.face(np.asarray(xf, F32), np.asarray(Y, F32), np.asarray(Z, F32) + np.zeros_like(xf, F32))[0]
-        return np.where(ok, D, np.nan)
-    def _plate_setup(s, fp):
-        """The heel half's front surface round the plate's own edge V (face_plate, hybrid), as a table of depth
-        behind the face surface over (y, z), for heel_depth / flush_front / attributes.
-        Inside V: the face itself.  Outside V the body rolls away like the head's own edges, measured on the toe half
-        (the top line's and the leading edge's per column, the toe end's as one mean profile), each normalised from the
-        edge (0) to the face-view silhouette (1): a point takes its nearest point of V's profile (by the direction V
-        faces there), at its own distance to the body's silhouette, scaled to the body's depth there (but no shallower
-        than the toe half's own).  Rows below the neck's heel flank take the lower convex hull of that and the
-        receded neck tube's front, so the roll runs on tangentially onto the neck.  The table holds (W) only round
-        the heel's quarter-ellipses (along the straight edges the head as built, warped onto them, is exact), not
-        deeper than 4-7 mm, not where the neck stands in front of it, and not above the arc's top, where the top line
-        runs into the neck as built."""
-        P = s.P; ym, yw = fp['ym'], fp['yw']; V = s.Vplate
-        # the profiles, measured on the toe half (as built, warped): top line, leading edge, toe
-        yt = np.arange(float(s.sil[:, 0].min()) - 1.0, ym, 0.2); zs = np.arange(-1.0, float(s.sil[:, 1].max()) + 3.0, 0.1)
-        hit, D = s._march(yt, zs)
-        kc = int(np.argmin(np.abs(zs - s.FC[2]))); xg = np.linspace(0.0, 1.0, 201)
-        et, eb, st, sb = s._plate_edges(D, zs, kc)
-        prof = {}; dsl = {'top': [], 'bot': [], 'side': []}
-        acc_t, acc_b = [], []
-        for j in np.nonzero((yt > -38.0) & (yt < ym - 2.0) & np.isfinite(et) & np.isfinite(eb))[0]:
-            col = D[j]
-            for e, sil, sgn, acc, key in ((et[j], st[j], 1, acc_t, 'top'), (eb[j], sb[j], -1, acc_b, 'bot')):
-                m_ = np.isfinite(col) & (sgn * (zs - e) >= 0)
-                x = sgn * (zs[m_] - e) / abs(sil - e); dsil = col[m_][np.argmax(x)]
-                o = np.argsort(x); acc.append(np.interp(xg, x[o], col[m_][o] / dsil)); dsl[key].append(dsil)
-        prof['top'], prof['bot'] = np.mean(acc_t, 0), np.mean(acc_b, 0)
-        acc_s = []
-        for k in np.nonzero(np.abs(zs - s.FC[2]) < 5.0)[0]:      # the toe end, rows across the middle of the face
-            row = D[:, k]; c = len(yt) - 1
-            if not (np.isfinite(row[c]) and row[c] < 0.1):
-                continue
-            j = c
-            while j - 1 >= 0 and np.isfinite(row[j - 1]) and row[j - 1] < 0.1: j -= 1
-            f = np.nonzero(np.isfinite(row))[0]; e, sil = yt[j], yt[f[0]]
-            m_ = np.isfinite(row) & (yt <= e); x = (e - yt[m_]) / (e - sil); dsil = row[m_][np.argmax(x)]
-            o = np.argsort(x); acc_s.append(np.interp(xg, x[o], row[m_][o] / dsil)); dsl['side'].append(dsil)
-        prof['side'] = np.mean(acc_s, 0)
-        for k in prof:   # from 0 at the edge to 1 at the silhouette, never falling
-            v = np.maximum.accumulate(np.clip(prof[k], 0.0, None)); v = (v - v[0]) / (v[-1] - v[0]); prof[k] = v
-        dsl = {k: float(np.median(v)) for k, v in dsl.items()}
-        print('  plate: profiles at x=.25/.5/.75: ' + ', '.join('%s %.3f/%.3f/%.3f (to %.1f mm deep)' % (k, *np.interp([.25, .5, .75], xg, v), dsl[k]) for k, v in prof.items()))
-        # the heel half as built (warped, neck receded, no table): depth D behind the face surface
-        yg = np.arange(ym - 8.0, float(s.A0[1]) + 30.0, 0.1); zg = np.arange(-1.0, float(s.sil[:, 1].max()) + 12.0, 0.1)
-        hit, Do = s._march(yg, zg)
-        s.hosel = lambda X, Y, Z: np.full(np.broadcast(X, Y, Z).shape, F32(1e3), F32)   # (the body alone)
-        hitb, Db = s._march(yg, zg)
-        del s.hosel
-        inside = np.isfinite(Do); inb = np.isfinite(Db)
-        # V densified, its outward normals; for each of its points the distance along the normal to the
-        # face-view silhouette of the body (as built, without the neck) and the depth there
-        Vd = V[V[:, 0] > ym - 6.0]
-        seg = np.sqrt((np.diff(Vd, axis=0) ** 2).sum(1)); sa = np.concatenate([[0], np.cumsum(seg)])
-        sq = np.arange(0.0, sa[-1], 0.05); Vd = np.stack([np.interp(sq, sa, Vd[:, 0]), np.interp(sq, sa, Vd[:, 1])], 1)
-        tg = np.gradient(Vd, axis=0); tg /= np.linalg.norm(tg, axis=1, keepdims=True); nv = np.stack([tg[:, 1], -tg[:, 0]], 1)
-        probe = Vd + 0.2 * nv
-        if np.mean(poly_sdf(probe[:, 0], probe[:, 1], V) > 0) < 0.5:
-            nv = -nv
-        dy, dzg = yg[1] - yg[0], zg[1] - zg[0]
-        def look(A, y, z):
-            i = np.clip(np.round((y - yg[0]) / dy).astype(int), 0, len(yg) - 1); k = np.clip(np.round((z - zg[0]) / dzg).astype(int), 0, len(zg) - 1)
-            out = (y >= yg[0]) & (y <= yg[-1]) & (z >= zg[0]) & (z <= zg[-1])
-            return np.where(out, A[i, k], np.nan)
-        def bil(A, y, z):   # bilinear lookup on the table grid
-            fy = np.clip((y - yg[0]) / dy, 0, len(yg) - 1.001); fz = np.clip((z - zg[0]) / dzg, 0, len(zg) - 1.001)
-            i = np.floor(fy).astype(int); k = np.floor(fz).astype(int); u = fy - i; v = fz - k
-            return A[i, k] * (1 - u) * (1 - v) + A[i + 1, k] * u * (1 - v) + A[i, k + 1] * (1 - u) * v + A[i + 1, k + 1] * u * v
-        inf_ = inb.astype(float)
-        Lq = np.full(len(Vd), 30.0); Dq = np.full(len(Vd), np.nan); prev = np.ones(len(Vd))
-        for step in np.arange(0.02, 30.0, 0.02):     # to where the (interpolated) silhouette is crossed
-            fin = bil(inf_, *(Vd + step * nv).T)
-            live = np.isnan(Dq) & (fin < 0.5)
-            st_ = step - 0.02 + 0.02 * np.clip((prev[live] - 0.5) / np.maximum(prev[live] - fin[live], 1e-6), 0.0, 1.0)
-            Lq[live] = st_
-            Dq[live] = look(Db, *(Vd[live] + (st_ - 0.1)[:, None] * nv[live]).T)
-            prev = fin
-        Lq = np.maximum(s._fill_smooth(sq, np.where(Lq < 30.0, np.maximum(Lq, 0.3), np.nan), 2.0), 0.3); Dq = s._fill_smooth(sq, Dq, 2.0)
-        wt = np.maximum(nv[:, 1], 0) ** 2; wb = np.maximum(-nv[:, 1], 0) ** 2; ws = nv[:, 0] ** 2
-        # where the body ends shallow (run flush into the heel's clip, or under the neck) it rolls as deep as the
-        # head's own edges do: no shallower than the toe-half depth for its direction
-        nom = wt * dsl['top'] + wb * dsl['bot'] + ws * dsl['side']          # (round the top, under the neck, the
-        Dq = Dq + (1.0 - wt) * np.maximum(nom - Dq, 0.0)                     # top line's own depth stands)
-        # the pillow: every table point outside V, from its nearest point of V
-        YG, ZG = np.meshgrid(yg, zg, indexing='ij'); sdv = poly_sdf(YG, ZG, V).astype(np.float64)
-        Dp = np.zeros(YG.shape); out = sdv > 0
-        allp = np.nonzero(((sdv > -6.0) & inside).ravel())[0]               # (near V: in and out)
-        py, pz = YG.ravel()[allp], ZG.ravel()[allp]; nall = np.empty(len(allp), int)
-        for c0 in range(0, len(allp), 4000):
-            c1 = min(len(allp), c0 + 4000)
-            d2 = (py[c0:c1, None] - Vd[None, :, 0]) ** 2 + (pz[c0:c1, None] - Vd[None, :, 1]) ** 2
-            nall[c0:c1] = np.argmin(d2, 1)
-        # how far round into the heel's quarter-ellipses the nearest point of V is: the table acts there; along
-        # the straight top and leading edges the head as built (warped onto them) is left exactly as it is
-        ka = int(np.argmax(Vd[:, 0])); s1 = sq[np.argmax((Vd[:, 0] >= fp['q_top'][0]) & (np.arange(len(Vd)) < ka))]
-        s2 = sq[len(Vd) - 1 - np.argmax((Vd[::-1, 0] >= fp['q_bot'][0]) & (np.arange(len(Vd))[::-1] > ka))]
-        ra = fp.get('arc_ramp', 5.0); wa = smootherstep(s1, s1 + ra, sq) * (1.0 - smootherstep(s2 - ra, s2, sq))
-        Wa = np.zeros(YG.shape); Wa.ravel()[allp] = wa[nall]
-        onear = out.ravel()[allp]; idx = allp[onear]; near = nall[onear]
-        # each point's own distance to the body's face-view silhouette (to the midpoints between the inside and
-        # outside cells along it), so every roll reaches its end exactly at the silhouette, whatever V's normal says
-        bpts = []
-        for ax_ in (0, 1):
-            a_ = inb[:-1, :] if ax_ == 0 else inb[:, :-1]; b_ = inb[1:, :] if ax_ == 0 else inb[:, 1:]
-            ii, kk = np.nonzero(a_ != b_)
-            bpts.append(np.stack([yg[ii] + (0.5 * dy if ax_ == 0 else 0.0), zg[kk] + (0.5 * dzg if ax_ == 1 else 0.0)], 1))
-        bpts = np.vstack(bpts); bpts = bpts[(bpts[:, 0] > ym - 2.0)]
-        dsl_ = np.empty(len(idx))
-        for c0 in range(0, len(idx), 3000):
-            c1 = min(len(idx), c0 + 3000)
-            d2 = (YG.ravel()[idx][c0:c1, None] - bpts[None, :, 0]) ** 2 + (ZG.ravel()[idx][c0:c1, None] - bpts[None, :, 1]) ** 2
-            dsl_[c0:c1] = np.sqrt(d2.min(1))
-        sv_ = sdv.ravel()[idx]
-        x = np.where(inb.ravel()[idx], sv_ / np.maximum(sv_ + dsl_, 1e-6), 1.0 + dsl_)
-        # round the top and the leading edge, the head's own roll there (as built, warped onto the outline's straight
-        # edges): per column, from the edge carried on straight out to the silhouette, normalised; for a point of V
-        # its column's (held past the straight edges), so where the table hands back to the head the two agree
-        (ct, kt), (cb, kb) = fp['top'], fp['bot']; yc = np.arange(ym - 6.0, 24.01, 0.5); PT = []; PB = []
-        yct, ycb = fp['q_top'][0], fp['q_bot'][0]   # (measured along the straight edges only, held past them)
-        for y in yc:
-            j = int(np.argmin(np.abs(yg - y))); col = np.where(inside[j], Do[j], np.nan); f = np.nonzero(np.isfinite(col))[0]
-            for e, sil, sgn, acc in ((ct + kt * y - fp['zshift'], zg[f[-1]], 1, PT), (cb + kb * y - fp['zshift'], zg[f[0]], -1, PB)):
-                m_ = np.isfinite(col) & (sgn * (zg - e) >= 0); xx = sgn * (zg[m_] - e) / max(abs(sil - e), 0.5)
-                dd = col[m_] / max(col[m_][np.argmax(xx)], 0.3); o = np.argsort(xx)
-                v = np.interp(xg, xx[o], dd[o]); v = np.maximum.accumulate(np.clip(v - v[0], 0, None)); acc.append(v / max(v[-1], 1e-6))
-        PT = np.array(PT); PB = np.array(PB)
-        for A_ in (PT, PB):   # smoothed along the edge (sigma 1.5 mm)
-            k_ = np.exp(-0.5 * (np.arange(-9, 10) * 0.5 / 1.5) ** 2); k_ /= k_.sum()
-            A_[:] = np.apply_along_axis(lambda v: np.convolve(np.pad(v, 9, mode='edge'), k_, mode='valid'), 0, A_)
-        icol = lambda y1: np.clip(np.round((np.clip(Vd[near, 0], yc[0], y1) - yc[0]) / 0.5).astype(int), 0, len(yc) - 1)
-        xi = np.clip(x, 0.0, 1.0) * (len(xg) - 1); x0 = np.floor(xi).astype(int).clip(0, len(xg) - 2); fr = xi - x0
-        lin = lambda A_, ic: A_[ic, x0] * (1 - fr) + A_[ic, x0 + 1] * fr
-        pv = (wt[near] * lin(PT, icol(yct)) + wb[near] * lin(PB, icol(ycb)) + ws[near] * np.interp(x, xg, prof['side'])) * Dq[near]
-        Dp.ravel()[idx] = np.where(x < 1.0, pv, 60.0)
-        # rows below the top-heel corner: the lower convex hull with the (receded) neck tube's front
-        Dt = Dp.copy(); nh = 0; hf = fp.get('hull_flank', 0.4); hy_ = fp.get('hull_y', (14.0, 20.0))
-        sl_, cl_ = math.sin(s.lie), math.cos(s.lie)
-        for k, z in enumerate(zg):
-            tf = s.tube_front(yg, np.full(len(yg), z))
-            pq = (yg - s.A0[1]) * sl_ - z * cl_                      # (offset from the neck's axis, heel-ward)
-            okt = np.isfinite(tf) & (pq >= hf * s.P['hosel']['r0']) & (tf >= fp.get('hull_dmin', 1.0)) & inside[:, k]   # its heel flank,
-            # where it is well behind the face (where the neck rises proud the body is left deep under it)
-            if not okt.any():
-                continue
-            okr = inside[:, k] & (Dp[:, k] < 59.0) & (yg >= hy_[0])   # (the heel only, eased in from hy_)
-            if not okr.any():
-                continue
-            pts = sorted(list(zip(yg[okr], Dp[okr, k])) + list(zip(yg[okt], tf[okt])))
-            hull = []
-            for q in pts:
-                while len(hull) >= 2 and (hull[-1][0] - hull[-2][0]) * (q[1] - hull[-2][1]) - \
-                        (hull[-1][1] - hull[-2][1]) * (q[0] - hull[-2][0]) <= 0:
-                    hull.pop()
-                hull.append(q)
-            hx, hd = s._round_hull(np.array([q[0] for q in hull]), np.array([q[1] for q in hull]))
-            sel = (yg >= hx[0]) & (yg <= hx[-1])
-            wh = smootherstep(hy_[0], hy_[1], yg[sel])
-            Dt[sel, k] = Dp[sel, k] + wh * (np.interp(yg[sel], hx, hd) - Dp[sel, k]); nh += 1
-        # light smoothing outside V (the per-row hulls and the nearest-point map are only C0), the plate exact
-        Dt = np.where(inside, Dt, 60.0)
-        def gblur(A, sy, sz, wgt=None):   # Gaussian; with wgt, normalised (only the cells weighted in count)
-            def g(B):
-                for ax, sg in ((0, sy), (1, sz)):
-                    n = int(3 * sg / 0.1) + 1; kk = np.exp(-0.5 * (np.arange(-n, n + 1) * 0.1 / sg) ** 2); kk /= kk.sum()
-                    B = np.apply_along_axis(lambda v: np.convolve(np.pad(v, n, mode='edge'), kk, mode='valid'), ax, B)
-                return B
-            if wgt is None:
-                return g(A)
-            return g(A * wgt) / np.maximum(g(wgt), 1e-6)
-        live = (inside & (Dt < 59.0)).astype(float)                     # (inside the silhouette only)
-        Dsm = np.where(live > 0, gblur(Dt, 0.25, 0.25, live), Dt)
-        hm = gblur((np.abs(Dt - Dp) > 0.005).astype(float) * live, 1.0, 1.0)   # where the hull acted, the rows
-        hm = np.clip(2.0 * hm, 0.0, 1.0)                                         # are made to agree
-        hs_ = fp.get('hull_sig', (0.5, 1.0))
-        Dsm = Dsm + hm * (np.where(live > 0, gblur(Dt, hs_[0], hs_[1], live), Dt) - Dsm)
-        Dt = np.where(sdv <= 0, 0.0, np.where(sdv < 0.6, Dt + smootherstep(0.0, 0.6, sdv) * (Dsm - Dt), Dsm))
-        Dt = np.where(sdv <= 0, 0.0, np.maximum(Dt, 0.0))
-        def grow(A, ok, n=40, step=0.25):   # carry the values on past the silhouette (rising gently), so the
-            A = np.where(ok, A, np.nan)      # interpolated table never mixes a far-off fill into the edge
-            for _ in range(n):
-                nb = np.stack([np.roll(A, 1, 0), np.roll(A, -1, 0), np.roll(A, 1, 1), np.roll(A, -1, 1)])
-                fill = np.nanmax(np.where(np.isfinite(nb), nb, -np.inf), 0)
-                new = ~np.isfinite(A) & np.isfinite(fill) & (fill > -np.inf)
-                A = np.where(new, fill + step, A)
-            return np.where(np.isfinite(A), A, 60.0)
-        Dt = grow(Dt, inside & (Dt < 59.0))
-        # the table holds from the toe half's end (ym .. yw), and not where the surface as built already turns
-        # steeply away to the silhouette (the profiles end where it does)
-        Dos = np.where(inside, gblur(np.where(inside, Do, 0.0), 1.0, 1.0, inside.astype(float)), 60.0)
-        Wv = smootherstep(ym, yw, YG)                       # (the heel half)
-        W = Wv * Wa * (1.0 - smootherstep(4.0, 7.0, np.minimum(Dos, Dt)))
-        # and not where the neck stands in front of it (where it rises out of the top line): there the body's own
-        # fillet into the neck stands (the table would carve a hollow under it)
-        TF = np.stack([s.tube_front(yg, np.full(len(yg), z)) for z in zg], 1)
-        Wn = np.where(np.isfinite(TF), 1.0 - smootherstep(-0.5, 2.5, Dt - TF), 1.0)
-        # nor, above the heel arc's top (where the top line runs on into the neck), within the neck fillet's reach
-        HS = np.where(inside, s.hosel(np.nan_to_num(hit, nan=-30.0).astype(F32), YG.astype(F32), ZG.astype(F32)), 1e3)
-        nf = fp.get('neck_keep', (2.0, 8.0, 20.0, 24.0))
-        Wn = Wn * (1.0 - (1.0 - smootherstep(nf[0], nf[1], HS)) * smootherstep(nf[2], nf[3], ZG))
-        Wn = gblur(Wn, 2.0, 2.0)
-        tl = fp.get('top_keep', (23.0, 25.5, 15.0, 19.0))   # and above the arc's top, the top line into the neck as built
-        Wn = Wn * (1.0 - smootherstep(tl[0], tl[1], ZG) * smootherstep(tl[2], tl[3], YG))
-        W = W * Wn
-
-        s.fo_plate = s.fo_plate_   # (the seam's outline, out by seam_in: insert 0 on the seam)
-        print('  plate: outline to y %.2f, hull on %d rows, rays %.1f-%.1f mm, depth there %.1f-%.1f mm'
-              % (V[:, 0].max(), nh, Lq.min(), Lq.max(), Dq.min(), Dq.max()))
-        Do = grow(Do, inside)
-        return dict(ym=ym, yh=yg.astype(F32), zs=zg.astype(F32), D=np.minimum(Dt, 60.0).astype(F32),
-                    Dt=np.minimum(Dt, 60.0).astype(F32), Do=Do.astype(F32), W=W.astype(F32))
+        bt, bb = fp['blend_top'], fp['blend_bot']
+        if arcs:
+            ra = fp.get('arc_ramp', (4.0, 1.0)); bt = (fp['q_top'][0] - ra[0], fp['q_top'][0] + ra[1]); bb = (fp['q_bot'][0] - ra[0], fp['q_bot'][0] + ra[1])
+        return (smootherstep(F32(bb[0]), F32(bb[1]), Y) * (F32(1) - wz) +
+                smootherstep(F32(bt[0]), F32(bt[1]), Y) * wz).astype(F32)
     def _mtab(s, Y, Z, key):
         m = s.heel; yh, zs, D = m['yh'], m['zs'], m[key]
         fy = np.clip((Y - yh[0]) / (yh[1] - yh[0]), 0, len(yh) - 1.001); fz = np.clip((Z - zs[0]) / (zs[1] - zs[0]), 0, len(zs) - 1.001)
@@ -1256,13 +1026,6 @@ class Wood:
         by W; above the plate's top edge it fades back to the surface as it was over r_top, so the top
         line and the crown keep their own shape (faded out over 2 r_top above the plate's top edge).
         Returns (cut depth, how far the target holds)."""
-        if s.plate is not None:   # face_plate: the table holds right up to the silhouette (no fade under the top line)
-            m = s.heel; Do = s._mtab(Y, Z, 'Do'); W = np.where(Y > F32(m['ym']), s._mtab(Y, Z, 'W'), F32(0))
-            Dm = (Do + W * (s._mtab(Y, Z, key) - Do)).astype(F32)
-            if fade:   # (released smoothly where the table lets go: never a cut at the surface's own copy)
-                Dm = (Dm - (F32(1) - W) * F32(0.3) - F32(14.0) * (F32(1) - smoothstep(F32(0.0), F32(0.02), W))).astype(F32)   # (and
-                # where it has let go entirely, nowhere near: the sampled table must not touch the head as built)
-            return Dm, W.astype(F32)
         m = s.heel; Do = s._mtab(Y, Z, 'Do'); W = np.where(Y > F32(m['ym']), s._mtab(Y, Z, 'W'), F32(0))   # (heel half only)
         zt = np.interp(Y, *m['Vt']).astype(F32)   # the plate's top edge, V (held level past its heel end)
         wz = (F32(1) - smootherstep(zt, zt + F32(2.0 * s.P['face_heel']['r_top']), Z)).astype(F32)
@@ -1275,10 +1038,6 @@ class Wood:
         Dm = Dm * wz - (F32(1) - wz) * F32(2.0 * s.P['hosel']['r0'])
         Dm = np.where(Y > F32(m['ym']), Dm, F32(-2.0 * s.P['hosel']['r0']))   # the toe half is not touched
         return Dm.astype(F32), w
-    def sweep_clip(s, Y, Z):
-        """The heel sweep's face-view clip as applied (faded out up its z range)."""
-        w = F32(1) - smootherstep(F32(s.sweep['z'][0]), F32(s.sweep['z'][1]), Z)
-        return (s.sweep_sd(Y, Z) - (F32(1) - w) * F32(20.0)).astype(F32)
     def sweep_sd(s, Y, Z):
         """Signed distance (y, z) to the region inside the heel edge and above the sole, with the
         corner rounded by the heel-sweep arc (exact: the inner wedge offset by R)."""
@@ -1311,6 +1070,10 @@ class Wood:
                 s.PF = poly_sdf(YY2, ZZ2, s.fo)
             else:   # (face_plate: through the warp, at the face plane)
                 s.PF = poly_sdf(YY2, ZZ2 if s.warp is None else ZZ2 + s.warp_dz(None, YY2, ZZ2), s.fo_geo)
+                if getattr(s, 'plate', None) is not None:   # (heel half: the plate's
+                    wb = s.plate_blend(YY2.astype(F32), ZZ2.astype(F32), arcs=True)   # own edge, round the heel's arcs)
+                    g = F32(s.plate.get('flare_out', 0.0))   # (grown a little: the flare's rounding then starts on V)
+                    s.PF = (s.PF + wb * (poly_sdf(YY2, ZZ2, s.Vplate) - g - s.PF)).astype(F32)
             s.PFb = poly_sdf(YY2, ZZ2, s.fo_body) if s.fo_body is not None else None
             if getattr(s, 'Vplate', None) is not None:
                 s.PVt = poly_sdf(YY2, ZZ2, s.Vplate)
@@ -1348,7 +1111,19 @@ class Wood:
             PSc = PS if P.get('sil_clip_y') is None else np.where(Y < F32(P['sil_clip_y']), PS, F32(-100.0))
             pre = round_isect(pre, PSc, F32(P.get('r_sil', 1.5)))  # face-view silhouette (traced)
         if PFb is None:
-            P2 = PF - F32(mx) * s.flare(F)                         # face outline, flaring back
+            fk = s.plate.get('flare_k') if getattr(s, 'plate', None) is not None else None
+            if fk:   # (face_plate, flare heel: a gentler roll-in on the heel half, so the cheek stays full)
+                wk = s.plate_blend(Y, Z, arcs=True)
+                fkz = s.plate.get('flare_k_z')
+                if fkz:   # (the cheek only, below the top line: there the top line keeps the toe's own roll)
+                    wk = wk * (F32(1) - smootherstep(F32(fkz[0]), F32(fkz[1]), Z))
+                fkd = s.plate.get('flare_k_d')
+                if fkd:   # (near the face only: far behind it the crown's heel keeps the toe's roll-in)
+                    wk = wk * (F32(1) - smootherstep(F32(fkd[0]), F32(fkd[1]), -F))
+                mxv = F32(mx) * (F32(1) + (F32(fk) - F32(1)) * wk)
+                P2 = PF - mxv * s.flare(F)
+            else:
+                P2 = PF - F32(mx) * s.flare(F)                         # face outline, flaring back
         else:  # cropped heel: the body recedes from the new heel edge at `bevel` (1 = 45 deg), opening
             # out like the flare's far term; it fades out over 2 r_top under the uncropped top line, so
             # the top line runs on into the hosel, and over r0 behind the hosel axis, so the crown
@@ -1372,25 +1147,32 @@ class Wood:
             Dm, wz = s.heel_depth(Y, Z)   # there the body meets the neck tangentially, so no fillet on the
             r0 = F32(P['hosel']['r0'])      # front half of the neck.  Both come back just behind the neck's
             gx = smoothstep(F32(s.A0[0]) - F32(0.5) * r0, F32(s.A0[0]), X)   # face-view silhouette, unseen
-            if s.plate is not None:   # (face_plate: the table reaches round the top line too, so it holds to
-                gx = F32(1) - smootherstep(F32(18.0), F32(24.0), -s.face(X, Y, Z)[0])   # a depth, not the neck)
-            cutf = s.face(X, Y, Z)[0] + Dm * gx - (F32(1) - gx) * F32(1e3)
-            rs = s.P['heel_sweep'].get('round') if (s.plate is not None and s.sweep is not None) else None
-            if rs:   # (face_plate: where the heel's roll meets the sweep's side the edge is rounded, not a crease)
-                cutf = round_isect(cutf, s.sweep_clip(Y, Z), F32(rs))
-            d = np.maximum(d, cutf)
+            d = np.maximum(d, s.face(X, Y, Z)[0] + Dm * gx - (F32(1) - gx) * F32(1e3))
             wz = wz * gx
-            if s.plate is not None:   # face_plate: no fillet where the body rolls onto the receded neck, the
-                fz = s.plate['fillet_z']   # full one up at the top line, where the neck rises out of it
-                kf = kf * (F32(fz[2]) + F32(1 - fz[2]) * smootherstep(F32(fz[0]), F32(fz[1]), Z))
-                kb = F32(s.plate.get('blend', 1.0)) * wz
-            else:
-                kf = kf * (F32(1) - wz)
-                # where the hull runs onto the cone the two only touch (tangent): a C2 blend of `blend` mm
-                # closes the hairline crease the sampled hull leaves there (adds at most blend/6)
-                kb = F32(P['face_heel'].get('blend', 1.0)) * wz
-        if s.plate is not None:   # face_plate: a C2 fillet (as big), so the neck rises out of the top line without a
-            dh = smin2(d, s.hosel(X, Y, Z), np.maximum(F32(1.5) * kf, F32(1e-3)))   # highlight line (1.5 k: as much fillet as smin)
+            kf = kf * (F32(1) - wz)
+            # where the hull runs onto the cone the two only touch (tangent): a C2 blend of `blend` mm
+            # closes the hairline crease the sampled hull leaves there (adds at most blend/6)
+            kb = F32(P['face_heel'].get('blend', 1.0)) * wz
+        if s.plate is not None:   # face_plate: a C2 fillet (as much as smin's), so the neck rises out of the head without a
+            fd = s.plate.get('fillet_d')   # highlight line; none at the plate's edge (it would stand proud of the face
+            if fd:                         # there), growing over fillet_d mm out from it
+                wf = smootherstep(F32(fd[0]), F32(fd[1]), s.PVt[None])
+                fe = s.plate.get('fillet_deep')
+                if fe:   # (only near the face: where the head lies well behind the face surface, above the top line or
+                    # behind the cheek, the fillet is full however near the plate's outline it is seen face-on)
+                    wd = smootherstep(F32(fe[0]), F32(fe[1]), -s.face(X, Y, Z)[0])
+                    if len(fe) > 2:   # (up by the top line only: low down, by the heel's sole, the plate rule holds)
+                        wd = wd * smootherstep(F32(fe[2]), F32(fe[3]), Z)
+                    wf = np.maximum(wf, wd)
+                kf = kf * wf
+            ft = s.plate.get('fillet_top')
+            if ft:   # (and more of it where the top line runs into the neck, which now stands further back: its front half)
+                wft = smootherstep(F32(ft[0]), F32(ft[1]), Z)
+                if len(ft) > 3:
+                    cf = (X - F32(s.A0[0])) / F32(P['hosel']['r0'])
+                    wft = wft * smootherstep(F32(ft[3]), F32(ft[4]), cf)
+                kf = kf * (F32(1) + F32(ft[2] - 1) * wft)
+            dh = smin2(d, s.hosel(X, Y, Z), np.maximum(F32(1.5) * kf, F32(1e-3)))
         else:
             dh = smin(d, s.hosel(X, Y, Z), np.maximum(kf, F32(1e-3)))  # exact cone, concave fillet
         if s.heel is not None:
@@ -1419,16 +1201,10 @@ class Wood:
         res = np.minimum(d, dh)
         if s.heel is not None:   # build the heel out to its table where the body as built lies behind it: a skin
             Dm, w = s.heel_depth(Y, Z, fade=False)   # 3 mm thick behind the target surface, where the table holds
-            outer = Fr + Dm
-            if s.plate is not None and s.sweep is not None and s.P['heel_sweep'].get('round'):
-                outer = round_isect(outer, s.sweep_clip(Y, Z), F32(s.P['heel_sweep']['round']))
-            sk = np.maximum(np.maximum(outer, -(Fr + Dm) - F32(3.0)), pre0)   # (W), inside the body's own shell
+            sk = np.maximum(np.maximum(Fr + Dm, -(Fr + Dm) - F32(3.0)), pre0)   # (W), inside the body's own shell
             if s.sweep is not None:      # and the face-view heel sweep
                 sk = np.maximum(sk, s.sweep_sd(Y, Z) * (F32(1) - smootherstep(F32(s.sweep['z'][0]), F32(s.sweep['z'][1]), Z)))
-            if s.plate is not None:   # (eased in: where the table lets go the skin sits just inside the head)
-                sk = sk + (F32(1) - w) * F32(0.3) + F32(10.0) * (F32(1) - smoothstep(F32(0.0), F32(0.02), w))
-            else:
-                sk = sk + F32(10) * (F32(1) - smootherstep(F32(0.9), F32(1.0), w))   # (eased in, no seam)
+            sk = sk + F32(10) * (F32(1) - smootherstep(F32(0.9), F32(1.0), w))   # (eased in, no seam)
             res = np.where(Y > F32(s.heel['ym']), np.minimum(res, sk), res)
         mf = getattr(s, 'hfill', None)
         if mf is not None:   # the corner fill: a skin in front of what is there, never more than 1.5 mm out
@@ -1464,7 +1240,7 @@ class Wood:
         A = {}
         if s.fo is not None:
             PFv = poly_sdf(Y, Z, s.fo)
-            if s.heel is not None:   # the grooves run out to the heel plate's edge (V): its outline, seam_in + margin out
+            if s.heel is not None or getattr(s, 'plate', None) is not None:   # the grooves run out to the heel plate's edge (V): its outline, seam_in + margin out
                 sp = (s.plate_blend(Y, Z) if s.plate is not None else
                       smootherstep(s.heel['ym'], s.P['face_heel'].get('bot_keep', 9.0), Y))   # (heel half)
                 PFh = poly_sdf(Y, Z, s.fo_plate) if s.plate is not None else np.minimum(PFv, poly_sdf(Y, Z, s.fo_plate))
@@ -1501,7 +1277,7 @@ class Wood:
         A['dark'] = dark; A['screw'] = screw
         gin = A.get('groove', np.full(len(V), -5.0, F32)) > 0
         hs = s.hosel(X, Y, Z) - 1.0
-        if s.heel is not None:   # the plate now runs over the neck's toe flank: there it is face, not hosel
+        if s.heel is not None or s.plate is not None:   # the plate now runs over the neck's toe flank: there it is face, not hosel
             hs = np.where(A['fo'] < 0, F32(100), hs)
         A['face'] = np.minimum(np.where(gin, 0.45, 0.10) - np.abs(F), hs).astype(F32)
         if 'fo' in A:

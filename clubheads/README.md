@@ -99,13 +99,13 @@ The modelled detail:
   - outline and section profiles: `width`, `depth`, `plan_mm` (the traced outline), `sil_face` (the face-view silhouette), `crown_u`/`crown_h`, `sole_u`/`sole_h`, `crown_lat`/`sole_lat`, `rtx`/`rtz`/`rbx`/`rbz`;
   - face: `fc`, `bulge`/`roll`, `insert`, `score`;
   - hosel and shaft: `hosel` (`sole_cut` runs the neck on down into the sole, on the 3 wood and hybrid; `neck_finish='sole'`
-    gives the whole neck the sole finish, on the 3 wood; `recede` (hybrid) flattens the neck's front and sets it back
-    below the top line, from `z[1]` down to `z[0]` and out again near the sole (`low`), so the face plate runs on over
-    it while the neck keeps its face-view outline), `sleeve`, `ferrule`, `shaft`. The hybrid's metal hosel stops at
-    z1 = 33 mm, so the adjustable sleeve starts about 4 mm above where the top line meets the neck;
+    gives the whole neck the sole finish, on the 3 wood), `sleeve`, `ferrule`, `shaft`. The hybrid's hosel axis sits at
+    x = -15.8, far enough back that from above its front runs smoothly on from the face's heel corner (no forward bulge),
+    and its metal hosel stops at z1 = 33 mm, so the adjustable sleeve starts about 4 mm above where the top line meets
+    the neck;
   - heel, in the face view: `heel_clip` (a straight chamfer from the sole into the hosel's heel edge; driver),
     or `heel_sweep` (one arc of radius `R`, tangent to the hosel's heel edge and to the sole; 3 wood and hybrid, R 30
-    and faded out over z = 30-40 on the hybrid; its `round` rounds the heel's roll into the sweep's side, hybrid);
+    and faded out over z = 30-40 on the hybrid);
     `face_heel` crops the face's heel edge parallel to the hosel's toe edge, `gap` mm clear of it, rounded into the
     top line (`r_top`) and the leading edge (`r_bot`), so the hosel stays a round cone beside the face (3 wood).
     `face_plate` (hybrid) gives the face an agreed outline instead: its top and leading edges are the lines
@@ -115,9 +115,13 @@ The modelled detail:
     slowly), the silhouette kept. The seam runs on the agreed line along the top and leading edges, with the plate
     flush for `band` mm beyond it as on the toe; round the heel the band tapers away (`taper`) and the plate meets
     the body on the agreed line, as on the 3 wood. The toe half's own edges hand over to it over `blend_top` and
-    `blend_bot`. Outside the plate the body rolls away with the head's own top-line, leading-edge and toe profiles,
-    each stretched to reach the face-view silhouette, and runs on tangentially onto the receded neck (no ridge,
-    lip or shelf); the top line runs into the neck as built. With `line='hosel'` (3 wood)
+    `blend_bot`. Round the heel's arcs the body's own face-outline flare (as round the toe) rolls away behind the
+    plate's edge, grown `flare_out` mm so the roll starts on it and gentled by `flare_k` so the cheek stays full (on the
+    cheek only: faded out up the heel over `flare_k_z` and back from the face over `flare_k_d`, so the top line and the
+    crown behind the neck keep the toe's own roll-in); the neck's fillet starts at nothing on the plate's edge (it would
+    stand proud of the face there) and grows over `fillet_d` mm out from it, but is full wherever the head lies well
+    behind the face up by the top line (`fillet_deep`: depth range, then height range), and `fillet_top` gives it more
+    where the top line rises into the neck, so the top line sweeps softly up into it (no ridge, lip or shelf). With `line='hosel'` (3 wood)
     the heel side follows the line of the hosel instead (`hosel_line`: the toe silhouette of the neck and sleeve as
     seen face-on): the score lines' heel ends sit on that line, and the visible face plate runs out to an edge
     parallel to it, `margin` mm beyond, rounded `r_top` / `r_bot` into the top edge (kept to y = `top_keep`, then its

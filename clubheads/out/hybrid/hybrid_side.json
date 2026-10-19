@@ -31,7 +31,7 @@
  ],
  "leading_edge": {
   "heel": [
-   925.51,
+   924.2,
    1889.92
   ],
   "toe": [
@@ -60,11 +60,11 @@
  "face_normal_toward_viewer": false,
  "shaft_axis": [
   [
-   785.07,
+   724.88,
    1981.01
   ],
   [
-   785.07,
+   724.88,
    49.9
   ]
  ],
@@ -96,9 +96,9 @@
   1982
  ],
  "render_seconds": {
-  "light": 41.4,
-  "dark": 40.3,
-  "line-black": 2.5,
+  "light": 25.3,
+  "dark": 27.6,
+  "line-black": 2.1,
   "curv": 0.9,
   "zebra": 1.2
  }
