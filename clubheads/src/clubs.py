@@ -52,8 +52,8 @@ CLUBS = {
         rtx=(3.5, 34.0), rtz=(3.5, 16.0), rbx=(5.0, 16.0), rbz=(4.0, 6.5), side_round=0.85, toe_round=0.3, toe_tip=(0.78, 1.02, 0.9),
         fc=(-3.0, 29.0), bulge=300.0, roll=300.0, face_r=(0.9, 0.7),
         insert=dict(a=45.0, b=23.5, p=3.2, b0=-1.5, c0=0.5, w=0.35, seam_in=2.2), border=1.6, flush_face=True,
-        score=dict(kind='panels', y0=-20.5, y1=24.0, hw0=22.5, hw1=26.0, lw=0.7, rows=(-10.0, 0.0, 10.0),
-                   rlen=17.0, rw=0.6, pitch=0.55, margin=1.75),
+        score=dict(kind='panels', u0=4.0, y0=-20.5, y1=24.0, hw0=22.5, hw1=26.0, lw=0.7, rows=(-10.0, 0.0, 10.0),
+                   gap=4.0, rw=1.2, rtip=0.24, pitch=0.55, margin=1.75),
         align=dict(x0=-17.0, x1=-25.0, w=0.9), side_face_u=0.22, crown_spec=0.12, crown_rough=0.55, crown_finish='gloss', sole_finish='gloss', profile_smooth=2.5,
         hosel=dict(x=-18.5, y=19.5, z0=36.0, z1=64.0, r0=7.2, r1=6.65, fillet=10.0, exact=True, r_top=0.12, face_gap=0.3, face_margin=-0.5),
         sleeve=dict(len=17.0, r=6.65, flush=True), ferrule=dict(len=16.0, r0=6.6, r1=4.7, flush=True),
@@ -1224,6 +1224,27 @@ class Wood:
         ins = s.P['insert']
         e = (np.abs(b - ins['b0']) / ins['a']) ** ins['p'] + (np.abs(c - ins['c0']) / ins['b']) ** ins['p']
         return ((1.0 - e ** (1.0 / ins['p'])) * min(ins['a'], ins['b'])).astype(F32)
+    def edge_in(s, Y, Z, F, face, ins):
+        """mm in from the face's visible edge, as seen face-on (in y-z): the engraved seam (ins) or, where the
+        face rolls away inside it (round the toe), the edge of the face mask.  That edge is traced from the
+        points given: in 1 deg sectors about the face centre, midway between the furthest face point and the
+        nearest point off the face, lightly smoothed round the outline."""
+        near = F > -3.0                                    # the front of the head only
+        dy = Y - F32(s.FC[1]); dz = Z - F32(s.FC[2])
+        r = np.hypot(dy, dz); n = 360
+        k = np.floor((np.arctan2(dz, dy) + np.pi) * (n / (2 * np.pi))).astype(int) % n
+        off = near & (face <= 0)
+        r_off = np.full(n, np.inf); np.minimum.at(r_off, k[off], r[off])
+        on = near & (face > 0) & (r < r_off[k])
+        r_on = np.zeros(n); np.maximum.at(r_on, k[on], r[on])
+        rb = 0.5 * (r_on + r_off)
+        g = np.exp(-0.5 * np.arange(-3, 4) ** 2); g /= g.sum()
+        rb = sum(gi * np.roll(rb, 3 - i) for i, gi in enumerate(g))
+        th = -np.pi + (np.arange(n) + 0.5) * (2 * np.pi / n)
+        edge = list(zip(s.FC[1] + rb * np.cos(th), s.FC[2] + rb * np.sin(th)))
+        out = np.full(len(Y), -5.0, F32)
+        out[near] = np.minimum(ins[near], -poly_sdf(Y[near], Z[near], edge))
+        return out
     def face_cut(s, X, Y, Z):
         # the face half-space stops a little above the face so it never slices the hosel
         F, b, c = s.face(X, Y, Z)
@@ -1288,6 +1309,8 @@ class Wood:
         elif s.heel is not None:   # heel face edge: where the heel table's plate ends (V), not the surface's own
             Do = s._mtab(Y, Z, 'Do'); Dt = Do + s._mtab(Y, Z, 'W') * (s._mtab(Y, Z, 'Dt') - Do)   # roll (unfaded,
             A['face'] = np.minimum(A['face'], np.where(Y > s.heel['ym'], 0.10 - Dt, 100.0)).astype(F32)   # so V holds to the top)
+        if P['score'].get('gap') is not None:   # the panels' side lines end a set gap inside the visible edge
+            A['edge_in'] = s.edge_in(Y, Z, F, A['face'], A['insert'])
         al = P.get('align')
         if al:  # subtle crown alignment line, just behind the face
             A['align'] = np.minimum(np.minimum(al['w'] / 2 - np.abs(Y - s.FC[1]), np.minimum(X - al['x1'], al['x0'] - X)),
@@ -2248,27 +2271,28 @@ def mat_wood(name, P):
         ln = nb.math('MULTIPLY', ln, reg)
     elif sc['kind'] == 'panels':
         # generic layout: a centre panel between two slightly flared vertical lines, three
-        # short horizontal lines either side, fine score texture on the side panels
-        afu = nb.math('ABSOLUTE', fu)
+        # horizontal lines either side, fine score texture on the side panels.  The whole layout sits
+        # u0 mm toward the toe (fu runs toward the heel).  The side lines end gap mm inside the visible
+        # edge, following it, and taper from rw at the panel line to rtip at their end
+        pu = nb.math('ADD', fu, sc['u0'])
+        afu = nb.math('ABSOLUTE', pu)
         tt = nb.math('DIVIDE', nb.math('SUBTRACT', fv, sc['y0']), sc['y1'] - sc['y0'])
         hw = nb.math('ADD', nb.math('MULTIPLY', nb.math('MINIMUM', nb.math('MAXIMUM', tt, 0.0), 1.0), sc['hw1'] - sc['hw0']), sc['hw0'])
-        if sc.get('margin') is not None:   # texture fills the face inside the seam, constant margin
-            inv = nb.smooth(nb.attr('insert'), sc['margin'] - 0.08, sc['margin'] + 0.08)
-        else:
-            inv = nb.math('MULTIPLY', nb.smooth(fv, sc['y0'] - 0.1, sc['y0'] + 0.1), nb.smooth(fv, sc['y1'] + 0.1, sc['y1'] - 0.1))
-        dv = nb.math('ABSOLUTE', nb.math('SUBTRACT', afu, hw))
-        paint = nb.math('MULTIPLY', nb.smooth(dv, sc['lw'] / 2 + 0.06, sc['lw'] / 2 - 0.06), inv)
-        outside = nb.smooth(nb.math('SUBTRACT', afu, hw), 0.0, 0.15)
-        reach = nb.smooth(nb.math('SUBTRACT', afu, hw), sc['rlen'] + 0.1, sc['rlen'] - 0.1)
+        inv = nb.smooth(nb.attr('insert'), sc['margin'] - 0.08, sc['margin'] + 0.08)   # texture fills the face inside the seam, constant margin
+        so = nb.math('SUBTRACT', afu, hw)   # mm out from the panel line
+        paint = nb.math('MULTIPLY', nb.smooth(nb.math('ABSOLUTE', so), sc['lw'] / 2 + 0.06, sc['lw'] / 2 - 0.06), inv)
+        outside = nb.smooth(so, 0.0, 0.15)
+        ein = nb.math('SUBTRACT', nb.attr('edge_in'), sc['gap'])   # mm short of the line's end
+        reach = nb.smooth(ein, -0.06, 0.06)
+        # width fraction: 1 at the panel line, 0 at the end; the line still to run there is about ein
+        wf = nb.math('DIVIDE', nb.math('MAXIMUM', ein, 0.0), nb.math('MAXIMUM', nb.math('ADD', nb.math('MAXIMUM', so, 0.0), ein), 0.1), clamp=True)
+        half = nb.math('ADD', nb.math('MULTIPLY', wf, (sc['rw'] - sc['rtip']) / 2), sc['rtip'] / 2)
         for r in sc['rows']:
-            hl = nb.smooth(nb.math('ABSOLUTE', nb.math('SUBTRACT', fv, r)), sc['rw'] / 2 + 0.06, sc['rw'] / 2 - 0.06)
+            hl = nb.smooth(nb.math('SUBTRACT', nb.math('ABSOLUTE', nb.math('SUBTRACT', fv, r)), half), 0.06, -0.06)
             paint = nb.math('MAXIMUM', paint, nb.math('MULTIPLY', nb.math('MULTIPLY', hl, inv), nb.math('MULTIPLY', outside, reach)))
-        if sc.get('margin') is not None:
-            side = nb.math('MULTIPLY', outside, inv)
-        else:
-            side = nb.math('MULTIPLY', nb.math('MULTIPLY', outside, nb.smooth(nb.math('SUBTRACT', afu, hw), sc['rlen'] + 6.0, sc['rlen'] + 5.0)), inv)
+        side = nb.math('MULTIPLY', outside, inv)
         ln = nb.math('MULTIPLY', nb.lines(fv, sc['pitch'], sc['pitch'] * 0.45, soft=0.04), side)
-        cc = nb.node('ShaderNodeCombineXYZ'); nb.link(fu, cc.inputs[0]); nb.link(fv, cc.inputs[1])
+        cc = nb.node('ShaderNodeCombineXYZ'); nb.link(pu, cc.inputs[0]); nb.link(fv, cc.inputs[1])
         rr = nb.node('ShaderNodeVectorRotate', rotation_type='Z_AXIS'); nb.link(cc.outputs[0], rr.inputs['Vector'])
         rr.inputs['Angle'].default_value = math.radians(45)
         dk = nb.node('ShaderNodeTexChecker'); nb.link(rr.outputs[0], dk.inputs['Vector']); dk.inputs['Scale'].default_value = 0.75

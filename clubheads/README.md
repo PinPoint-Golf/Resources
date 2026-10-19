@@ -97,7 +97,12 @@ The modelled detail:
 **Parameters** are in the `CLUBS` dict, with lengths in mm and heights vertical.
 - **Woods:**
   - outline and section profiles: `width`, `depth`, `plan_mm` (the traced outline), `sil_face` (the face-view silhouette), `crown_u`/`crown_h`, `sole_u`/`sole_h`, `crown_lat`/`sole_lat`, `rtx`/`rtz`/`rbx`/`rbz`;
-  - face: `fc`, `bulge`/`roll`, `insert`, `score`;
+  - face: `fc`, `bulge`/`roll`, `insert`, `score`. The driver's `score` (`kind='panels'`) is a centre panel between
+    two flared vertical lines (half-width `hw0` at `y0` to `hw1` at `y1`, width `lw`) with the whole layout set `u0` mm
+    toward the toe (the face coordinate fu itself runs toward the heel); side lines at heights `rows`, which run out to `gap` mm
+    inside the face's visible edge, following it (the attribute `edge_in`: the engraved seam, or round the toe the edge
+    where the face rolls away inside it), and taper from `rw` at the panel line to `rtip` at their end; and fine score
+    texture (`pitch`) on the side panels, out to `margin` mm inside the seam;
   - hosel and shaft: `hosel` (`sole_cut` runs the neck on down into the sole, on the 3 wood and hybrid; `neck_finish='sole'`
     gives the whole neck the sole finish, on the 3 wood), `sleeve`, `ferrule`, `shaft`. The hybrid's hosel axis sits at
     x = -15.8, far enough back that from above its front runs smoothly on from the face's heel corner (no forward bulge),
